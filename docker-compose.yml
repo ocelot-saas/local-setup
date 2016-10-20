@@ -1,0 +1,56 @@
+version: '2'
+services:
+  postgres:
+    container_name: ocelot-postgres
+    image: postgres
+    environment:
+     - POSTGRES_USER=ocelot
+     - POSTGRES_PASSWORD=ocelot
+     - POSTGRES_DB=ocelot
+  identity-migrate:
+    container_name: ocelot-identity-migrate
+    image: ocelot-identity
+    build:
+      context: ../identity
+    links:
+      - postgres
+    volumes:
+      - ../identity/bin:/ocelot/pack/bin
+    entrypoint: /ocelot/pack/bin/migrate.sh
+  identity:
+    container_name: ocelot-identity
+    image: ocelot-identity
+    build:
+      context: ../identity
+    ports:
+      - 10001:10000
+    links:
+      - postgres
+    depends_on:
+      - identity-migrate
+    volumes:
+      - ../identity/src:/ocelot/pack/src
+  inventory-migrate:
+    container_name: ocelot-inventory-migrate
+    image: ocelot-inventory
+    build:
+      context: ../inventory
+    links:
+      - postgres
+    volumes:
+      - ../inventory/bin:/ocelot/pack/bin
+    entrypoint: /ocelot/pack/bin/migrate.sh
+  inventory:
+    container_name: ocelot-inventory
+    image: ocelot-inventory
+    build:
+      context: ../inventory
+    ports:
+      - 10002:10000
+    links:
+      - postgres
+      - identity
+    depends_on:
+      - inventory-migrate
+    volumes:
+      - ../inventory/src:/ocelot/pack/src
