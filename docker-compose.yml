@@ -54,3 +54,15 @@ services:
       - inventory-migrate
     volumes:
       - ../inventory/src:/ocelot/pack/src
+  admin:
+    container_name: ocelot-admin
+    image: ocelot-admin
+    build:
+      context: ../admin
+    ports:
+      - 10000:10000
+    links:
+      - identity
+      - inventory
+    volumes:
+      - ../admin/src:/ocelot/pack/src
