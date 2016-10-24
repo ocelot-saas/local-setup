@@ -68,3 +68,15 @@ services:
       - inventory
     volumes:
       - ../admin/src:/ocelot/pack/src
+  webshop:
+    container_name: ocelot-webshop
+    image: ocelot-webshop
+    build:
+      context: ../webshop
+    ports:
+      - 10100:10000
+    links:
+      - identity
+      - inventory
+    volumes:
+      - ../webshop/src:/ocelot/pack/src
