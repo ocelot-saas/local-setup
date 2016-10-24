@@ -3,6 +3,8 @@ services:
   postgres:
     container_name: ocelot-postgres
     image: postgres
+    ports:
+     - 10010:5432
     environment:
      - POSTGRES_USER=ocelot
      - POSTGRES_PASSWORD=ocelot
