@@ -1,53 +1,29 @@
 version: '2'
 services:
   postgres:
-    container_name: ocelot-postgres
+    container_name: ocelot-saas-postgres
     image: postgres
     ports:
      - 10010:5432
     environment:
-     - POSTGRES_USER=ocelot
-     - POSTGRES_PASSWORD=ocelot
-     - POSTGRES_DB=ocelot
-  identity-migrate:
-    container_name: ocelot-identity-migrate
-    image: ocelot-identity
-    build:
-      context: ../identity
-    links:
-      - postgres
-    volumes:
-      - ../identity/bin:/ocelot/pack/bin
-      - ../identity/secrets.json:/ocelot/var/secrets.json
-    entrypoint: /ocelot/pack/bin/migrate.sh
+     - POSTGRES_USER=ocelot-saas
+     - POSTGRES_PASSWORD=ocelot-saas
+     - POSTGRES_DB=ocelot-saas
   identity:
-    container_name: ocelot-identity
-    image: ocelot-identity
+    container_name: ocelot-saas-identity
+    image: ocelot-saas-identity
     build:
       context: ../identity
     ports:
       - 10001:10000
     links:
       - postgres
-    depends_on:
-      - identity-migrate
     volumes:
-      - ../identity/src:/ocelot/pack/src
-      - ../identity/secrets.json:/ocelot/var/secrets.json
-  inventory-migrate:
-    container_name: ocelot-inventory-migrate
-    image: ocelot-inventory
-    build:
-      context: ../inventory
-    links:
-      - postgres
-    volumes:
-      - ../inventory/bin:/ocelot/pack/bin
-      - ../inventory/secrets.json:/ocelot/var/secrets.json
-    entrypoint: /ocelot/pack/bin/migrate.sh
+      - ../identity/src:/ocelot-saas/pack/src
+      - ../identity/secrets.json:/ocelot-saas/var/secrets.json
   inventory:
-    container_name: ocelot-inventory
-    image: ocelot-inventory
+    container_name: ocelot-saas-inventory
+    image: ocelot-saas-inventory
     build:
       context: ../inventory
     ports:
@@ -55,14 +31,12 @@ services:
     links:
       - postgres
       - identity
-    depends_on:
-      - inventory-migrate
     volumes:
-      - ../inventory/src:/ocelot/pack/src
-      - ../inventory/secrets.json:/ocelot/var/secrets.json
+      - ../inventory/src:/ocelot-saas/pack/src
+      - ../inventory/secrets.json:/ocelot-saas/var/secrets.json
   admin:
-    container_name: ocelot-admin
-    image: ocelot-admin
+    container_name: ocelot-saas-admin
+    image: ocelot-saas-admin
     build:
       context: ../admin
     ports:
@@ -71,11 +45,11 @@ services:
       - identity
       - inventory
     volumes:
-      - ../admin/src:/ocelot/pack/src
-      - ../admin/secrets.json:/ocelot/var/secrets.json
+      - ../admin/src:/ocelot-saas/pack/src
+      - ../admin/secrets.json:/ocelot-saas/var/secrets.json
   webshop:
-    container_name: ocelot-webshop
-    image: ocelot-webshop
+    container_name: ocelot-saas-webshop
+    image: ocelot-saas-webshop
     build:
       context: ../webshop
     ports:
@@ -84,5 +58,5 @@ services:
       - identity
       - inventory
     volumes:
-      - ../webshop/src:/ocelot/pack/src
-      - ../webshop/secrets.json:/ocelot/var/secrets.json
+      - ../webshop/src:/ocelot-saas/pack/src
+      - ../webshop/secrets.json:/ocelot-saas/var/secrets.json
