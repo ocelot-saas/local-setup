@@ -34,6 +34,18 @@ services:
     volumes:
       - ../inventory/src:/ocelot-saas/pack/src
       - ../inventory/secrets.json:/ocelot-saas/var/secrets.json
+  actions:
+    container_name: ocelot-saas-actions
+    image: ocelot-saas-actions
+    build:
+      context: ../actions
+    ports:
+      - 10003:10000
+    links:
+      - postgres
+    volumes:
+      - ../actions/src:/ocelot-saas/pack/src
+      - ../actions/secrets.json:/ocelot-saas/var/secrets.json
   admin:
     container_name: ocelot-saas-admin
     image: ocelot-saas-admin
